@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Issuer - E-Grampanchayat Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .document-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            height: 100%;
+            transition: transform 0.3s ease;
+        }
+
+        .document-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .document-icon {
+            font-size: 2.5rem;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+
+        .document-type {
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .document-type:hover {
+            border-color: var(--secondary-color);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .document-type.selected {
+            border-color: var(--secondary-color);
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+
+        .document-type i {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+            margin-right: 1rem;
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background-color: #ffd700;
+            color: #000;
+        }
+
+        .status-approved {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .status-rejected {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .document-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .document-item {
+            border-left: 4px solid var(--secondary-color);
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .document-item:hover {
+            transform: translateX(10px);
+        }
+
+        .required-documents {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+
+        .required-documents ul {
+            margin-bottom: 0;
+            padding-left: 1.5rem;
+        }
+
+        #documentForm {
+            display: none;
+        }
+
+        .back-button {
+            margin-bottom: 1rem;
+        }
+
+        .tracking-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-landmark me-2"></i>E-Grampanchayat
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="document-issuer.html">Documents</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <section class="py-5 mt-5">
+        <div class="container">
+            <h2 class="text-center mb-5" data-aos="fade-up">Document Issuer</h2>
+            
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <!-- Document Type Selection -->
+                    <div id="documentTypeSelection" class="document-card" data-aos="fade-up">
+                        <i class="fas fa-file-alt document-icon"></i>
+                        <h3>Select Document Type</h3>
+                        <p>Choose the document you need to apply for</p>
+                        
+                        <div class="document-type" onclick="showDocumentForm('income')">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                            <span>Income Certificate</span>
+                        </div>
+                        <div class="document-type" onclick="showDocumentForm('residence')">
+                            <i class="fas fa-home"></i>
+                            <span>Residence Certificate</span>
+                        </div>
+                        <div class="document-type" onclick="showDocumentForm('caste')">
+                            <i class="fas fa-id-card"></i>
+                            <span>Caste Certificate</span>
+                        </div>
+                        <div class="document-type" onclick="showDocumentForm('birth')">
+                            <i class="fas fa-baby"></i>
+                            <span>Birth Certificate</span>
+                        </div>
+                    </div>
+
+                    <!-- Document Application Form -->
+                    <div id="documentForm" class="document-card" data-aos="fade-up">
+                        <button class="btn btn-outline-primary back-button" onclick="showDocumentTypes()">
+                            <i class="fas fa-arrow-left"></i> Back to Document Types
+                        </button>
+                        <i class="fas fa-file-alt document-icon"></i>
+                        <h3 id="formTitle">Apply for Document</h3>
+                        <p id="formDescription">Please fill in your details</p>
+                        
+                        <form id="applicationForm">
+                            <input type="hidden" id="documentType" name="documentType">
+                            
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="name" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="dob" class="form-label">Date of Birth</label>
+                                <input type="date" class="form-control" id="dob" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="address" class="form-label">Address</label>
+                                <textarea class="form-control" id="address" rows="3" required></textarea>
+                            </div>
+
+                            <div class="required-documents">
+                                <h5>Required Documents</h5>
+                                <ul id="requiredDocsList">
+                                    <!-- Will be populated dynamically -->
+                                </ul>
+                            </div>
+
+                            <div class="mb-3 mt-3">
+                                <label for="documents" class="form-label">Upload Documents</label>
+                                <input type="file" class="form-control" id="documents" multiple required>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100">Submit Application</button>
+                        </form>
+
+                        <!-- Tracking Section -->
+                        <div class="tracking-section">
+                            <h4>Track Your Application</h4>
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Enter Application ID" id="applicationId">
+                                <button class="btn btn-primary" type="button" onclick="trackApplication()">Track</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Application History Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="document-card" data-aos="fade-up">
+                        <i class="fas fa-history document-icon"></i>
+                        <h3>Application History</h3>
+                        <p>View and track all your document applications</p>
+
+                        <div class="document-list">
+                            <div class="card document-item">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5 class="card-title">Income Certificate</h5>
+                                            <p class="card-text">Application ID: DOC-2024-001</p>
+                                            <p class="card-text">Applied on: 15 March 2024</p>
+                                        </div>
+                                        <span class="status-badge status-approved">Approved</span>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-primary mt-2">Download</button>
+                                </div>
+                            </div>
+
+                            <div class="card document-item">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5 class="card-title">Residence Certificate</h5>
+                                            <p class="card-text">Application ID: DOC-2024-002</p>
+                                            <p class="card-text">Applied on: 14 March 2024</p>
+                                        </div>
+                                        <span class="status-badge status-pending">Pending</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card document-item">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5 class="card-title">Caste Certificate</h5>
+                                            <p class="card-text">Application ID: DOC-2024-003</p>
+                                            <p class="card-text">Applied on: 10 March 2024</p>
+                                        </div>
+                                        <span class="status-badge status-rejected">Rejected</span>
+                                    </div>
+                                    <p class="text-danger mt-2">Reason: Incomplete documentation</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Track Section -->
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>E-Grampanchayat Portal</h5>
+                    <p>Empowering villages through digital governance</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p>Contact: info@egrampanchayat.gov.in</p>
+                    <p>Phone: 1800-XXX-XXXX</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+
+        const documentTypes = {
+            income: {
+                title: 'Income Certificate',
+                description: 'Apply for your income certificate',
+                requiredDocs: ['Aadhar Card', 'PAN Card', 'Income Proof', 'Bank Statement']
+            },
+            residence: {
+                title: 'Residence Certificate',
+                description: 'Apply for your residence certificate',
+                requiredDocs: ['Aadhar Card', 'Address Proof', 'Utility Bill', 'Passport Size Photo']
+            },
+            caste: {
+                title: 'Caste Certificate',
+                description: 'Apply for your caste certificate',
+                requiredDocs: ['Aadhar Card', 'Birth Certificate', 'Caste Proof', 'Passport Size Photo']
+            },
+            birth: {
+                title: 'Birth Certificate',
+                description: 'Apply for your birth certificate',
+                requiredDocs: ['Aadhar Card', 'Hospital Records', 'Parents ID Proof', 'Passport Size Photo']
+            }
+        };
+
+        function showDocumentForm(type) {
+            document.getElementById('documentTypeSelection').style.display = 'none';
+            document.getElementById('documentForm').style.display = 'block';
+            
+            const docInfo = documentTypes[type];
+            document.getElementById('formTitle').textContent = docInfo.title;
+            document.getElementById('formDescription').textContent = docInfo.description;
+            document.getElementById('documentType').value = type;
+            
+            // Update required documents list
+            const docsList = document.getElementById('requiredDocsList');
+            docsList.innerHTML = '';
+            docInfo.requiredDocs.forEach(doc => {
+                const li = document.createElement('li');
+                li.textContent = doc;
+                docsList.appendChild(li);
+            });
+        }
+
+        function showDocumentTypes() {
+            document.getElementById('documentForm').style.display = 'none';
+            document.getElementById('documentTypeSelection').style.display = 'block';
+        }
+
+        function trackApplication() {
+            const applicationId = document.getElementById('applicationId').value;
+            if (applicationId) {
+                alert('Tracking Application ID: ' + applicationId + '\nStatus: In Progress');
+            } else {
+                alert('Please enter an Application ID');
+            }
+        }
+
+        function quickTrackApplication() {
+            const applicationId = document.getElementById('quickTrackId').value;
+            if (applicationId) {
+                // Simulate tracking result
+                const statuses = ['Pending', 'In Progress', 'Approved', 'Rejected'];
+                const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+                const statusClass = randomStatus.toLowerCase().replace(' ', '-');
+                
+                const resultHtml = `
+                    <div class="card document-item mt-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="card-title">Application Status</h5>
+                                    <p class="card-text">Application ID: ${applicationId}</p>
+                                    <p class="card-text">Last Updated: ${new Date().toLocaleDateString()}</p>
+                                </div>
+                                <span class="status-badge status-${statusClass}">${randomStatus}</span>
+                            </div>
+                            ${randomStatus === 'Rejected' ? '<p class="text-danger mt-2">Reason: Please contact the office for details</p>' : ''}
+                        </div>
+                    </div>
+                `;
+                
+                // Insert the result above the tracking input
+                const trackingSection = document.querySelector('.tracking-section');
+                const existingResult = trackingSection.querySelector('.tracking-result');
+                if (existingResult) {
+                    existingResult.remove();
+                }
+                trackingSection.insertAdjacentHTML('beforeend', `<div class="tracking-result">${resultHtml}</div>`);
+            } else {
+                alert('Please enter an Application ID');
+            }
+        }
+
+        // Form Submission
+        document.getElementById('applicationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const docType = document.getElementById('documentType').value;
+            const docInfo = documentTypes[docType];
+            alert(`Application submitted successfully!\nDocument: ${docInfo.title}\nApplication ID: DOC-${new Date().getTime()}`);
+            this.reset();
+            showDocumentTypes();
+        });
+    </script>
+</body>
+</html> 

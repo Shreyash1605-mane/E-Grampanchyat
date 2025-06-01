@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Problem - E-Grampanchayat Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .problem-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            height: 100%;
+        }
+
+        .status-card {
+            border-left: 4px solid var(--secondary-color);
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .status-card:hover {
+            transform: translateX(10px);
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background-color: #ffd700;
+            color: #000;
+        }
+
+        .status-in-progress {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .status-resolved {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .problem-image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            margin-top: 1rem;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .description-counter {
+            font-size: 0.8rem;
+            color: #666;
+            text-align: right;
+            margin-top: 0.25rem;
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 15px;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            height: 100%;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-landmark me-2"></i>E-Grampanchayat
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="report-problem.html">Report Problem</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <section class="py-5 mt-5">
+        <div class="container">
+            <h2 class="text-center mb-5" data-aos="fade-up">Problem Management</h2>
+            <div class="row g-4">
+                <!-- Report Problem Card -->
+                <div class="col-lg-6" data-aos="fade-up">
+                    <div class="feature-card">
+                        <i class="fas fa-exclamation-circle card-icon"></i>
+                        <h3>Report a Problem</h3>
+                        <p>Submit your problem details and get a tracking ID for follow-up</p>
+                        <form id="problemForm">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="phone" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="problemType" class="form-label">Problem Type</label>
+                                <select class="form-select" id="problemType" required>
+                                    <option value="">Select Problem Type</option>
+                                    <option value="water">Water Supply</option>
+                                    <option value="electricity">Electricity</option>
+                                    <option value="road">Road Maintenance</option>
+                                    <option value="sanitation">Sanitation</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Problem Description</label>
+                                <textarea class="form-control" id="description" rows="4" required 
+                                    placeholder="Enter your problem description here"
+                                    maxlength="500"></textarea>
+                                <div class="description-counter">
+                                    <span id="charCount">0</span>/500 characters
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="location" class="form-label">Problem Location</label>
+                                <input type="text" class="form-control" id="location" required 
+                                    placeholder="Enter the location of the problem"
+                                    maxlength="100">
+                            </div>
+                            <div class="mb-3">
+                                <label for="image" class="form-label">Upload Image (Optional)</label>
+                                <input type="file" class="form-control" id="image" accept="image/*">
+                                <img id="imagePreview" class="problem-image-preview mt-2">
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Submit Report</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Track Problem Card -->
+                <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-card">
+                        <i class="fas fa-search card-icon"></i>
+                        <h3>Track Problem Status</h3>
+                        <p>Enter your tracking ID to check the status of your reported problem</p>
+                        <div class="mb-4">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Enter your tracking ID" id="trackingId">
+                                <button class="btn btn-primary" type="button" id="trackButton">Track</button>
+                            </div>
+                        </div>
+
+                        <!-- Sample Problem Status Cards -->
+                        <div id="statusResults">
+                            <div class="card status-card" data-aos="fade-up">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5 class="card-title">Water Supply Issue</h5>
+                                            <p class="card-text">Tracking ID: PRB-2024-001</p>
+                                            <p class="card-text">Location: Main Street, Village Center</p>
+                                        </div>
+                                        <span class="status-badge status-pending">Pending</span>
+                                    </div>
+                                    <p class="card-text mt-2">Reported on: 15 March 2024</p>
+                                </div>
+                            </div>
+
+                            <div class="card status-card" data-aos="fade-up" data-aos-delay="100">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5 class="card-title">Road Maintenance</h5>
+                                            <p class="card-text">Tracking ID: PRB-2024-002</p>
+                                            <p class="card-text">Location: North Road, Block 3</p>
+                                        </div>
+                                        <span class="status-badge status-in-progress">In Progress</span>
+                                    </div>
+                                    <p class="card-text mt-2">Reported on: 14 March 2024</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>E-Grampanchayat Portal</h5>
+                    <p>Empowering villages through digital governance</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p>Contact: info@egrampanchayat.gov.in</p>
+                    <p>Phone: 1800-XXX-XXXX</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+
+        // Image Preview
+        document.getElementById('image').addEventListener('change', function(e) {
+            const preview = document.getElementById('imagePreview');
+            const file = e.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            }
+
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Character Counter for Description
+        document.getElementById('description').addEventListener('input', function(e) {
+            const charCount = document.getElementById('charCount');
+            charCount.textContent = e.target.value.length;
+        });
+
+        // Form Submission
+        document.getElementById('problemForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Here you would typically send the form data to your backend
+            alert('Problem reported successfully! Your tracking ID is: PRB-' + new Date().getTime());
+            this.reset();
+            document.getElementById('imagePreview').style.display = 'none';
+            document.getElementById('charCount').textContent = '0';
+        });
+
+        // Tracking Button
+        document.getElementById('trackButton').addEventListener('click', function() {
+            const trackingId = document.getElementById('trackingId').value;
+            if (trackingId) {
+                // Here you would typically fetch the status from your backend
+                alert('Tracking ID: ' + trackingId + '\nStatus: In Progress');
+            } else {
+                alert('Please enter a tracking ID');
+            }
+        });
+    </script>
+</body>
+</html> 
